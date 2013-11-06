@@ -54,15 +54,22 @@ class DatabaseCUHKWMA:
 if __name__ == '__main__':
     try:
         username, password = GoogleSpreadsheet.getLoginInfo()
+        outputfilename = raw_input('Output file name=? ')
+        outf = open(outputfilename, 'wb')
         dbCUHK = DatabaseCUHKWMA(username, password)
         for item in sorted(dbCUHK.data, key=lambda item: item['lastname']):
             lastname = item['lastname'] if not (item['lastname'] is None) else ''
             firstname = item['firstname'] if not (item['firstname'] is None) else ''
             chinesename = item['chinesename'] if not (item['chinesename'] is None) else ''
             email = item['emailaddress'] if not (item['emailaddress'] is None) else ''
+            
             lastname = lastname.strip()
             firstname = firstname.strip()
             chinesename = chinesename.strip()
-            print firstname+' '+lastname+' '+chinesename+' <'+email.strip()+'>,'
+            email = email.strip()
+            rowstr = unicode(firstname+' '+lastname+' '+chinesename+' <'+email.strip()+'>,\n')
+            
+            outf.write(rowstr.encode('utf8'))
+        outf.close()
     except BadAuthentication:
         print 'Invalid e-mail or password.'
